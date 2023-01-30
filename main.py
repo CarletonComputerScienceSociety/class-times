@@ -59,6 +59,11 @@ for course in courses:
     # Get the course section
     course_section = course.parent.parent.find_next_sibling("td").text
 
+    # Ignore any tutorials. A tutorial contains a number after the section code.
+    # TODO: Add them to a different table?
+    if len(course_section) > 1:
+        continue
+
     # Get the professor
     professor = course.parent.parent.parent.findChildren()[-1].text
 
