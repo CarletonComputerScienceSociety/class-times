@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 # Load the html file from data/comp.html
 with open("data/comp.html") as fp:
-    soup = BeautifulSoup(fp, 'html.parser')
+    soup = BeautifulSoup(fp, "html.parser")
 
 # Find all the courses. A course can be found as a font element with color blue,
 # and starting text COMP. The course code is the text of the font element.
@@ -38,6 +38,7 @@ download this file and put it in the data folder with the title "comp.html".
 | Course | Professor | Schedule |
 | --- | --- | --- |
 """
+readme_markdown_bin = {}
 
 # Set up the GitHub Issue Template markdown string.
 issue_template_markdown_string = """---
@@ -53,11 +54,16 @@ This is a checklist of all the COMP courses and their times. Check off sections
 that have been advertised to.
 
 """
+issue_template_markdown_bin = {}
+
+course_list = []
+date_list = {}
+
 
 # Go through each course and get the professor. Professor example:
 #
 # <td align="left" width="9%">Connor Hillen</td>
-# 
+#
 # Next, get the schedule. Schedule example:
 #
 # <tr bgcolor="#C0C0C0">
@@ -99,18 +105,65 @@ for course in courses:
     time = strip("Time")
     building = strip("Building")
     room = strip("Room")
-    
-    # Add the course, professor, and schedule to the markdown string
-    readme_markdown_string += f"| {course.text} {course_section} | {professor} | {days} {time} {building} {room} |\n"
 
-    # Add the course to the GitHub Issue Template markdown string
-    issue_template_markdown_string += f"- [ ] {course.text} {course_section} ({professor}, {days} {time} {building} {room})\n"
+    course_string = f"| {course.text} {course_section} | {professor} | {days} {time} {building} {room} |\n"
+    course_list.append(course_string)
+
+    if days not in issue_template_markdown_bin:
+        issue_template_markdown_bin[days] = []
+    issue_template_markdown_bin[days].append(
+        [
+            course.text,
+            course_section,
+            professor,
+            days,
+            time,
+            building,
+            room,
+        ]
+    )
+
+    # Add the course, professor, and schedule to the markdown string
+    readme_markdown_line = f"| {course.text} {course_section} | {professor} | {days} {time} {building} {room} |\n"
+    readme_markdown_string += f"{readme_markdown_line}"
+    if days not in readme_markdown_bin:
+        readme_markdown_bin[days] = []
+    readme_markdown_bin[days].append(readme_markdown_line)
+
+    # # Add the course to the GitHub Issue Template markdown string
+    # issue_template_string = f"- [ ] {course.text} {course_section} ({professor}, {days} {time} {building} {room})"
+    # # issue_template_markdown_string += f"{issue_template_string}\n"
+    # if days not in issue_template_markdown_bin:
+    #     issue_template_markdown_bin[days] = []
+    # issue_template_markdown_bin[days].append(issue_template_string)
+
 
 # Write the markdown string to the README.md file
 with open("README.md", "w") as fp:
     fp.write(readme_markdown_string)
 
+sorted_days = [
+    "Mon",
+    "Mon Wed",
+    "Tue",
+    "Tue Thu",
+    "Wed",
+    "Wed Fri",
+    "Thu",
+    "Fri",
+]
+
 # Write the markdown string to the
 # .github/ISSUE_TEMPLATE/class-advertising-checklist.md file
 with open(".github/ISSUE_TEMPLATE/class-advertising-checklist.md", "w") as fp:
     fp.write(issue_template_markdown_string)
+    for day in sorted_days:
+        if day not in issue_template_markdown_bin:
+            continue
+
+        fp.write(f"## {day}\n")
+        days_courses = issue_template_markdown_bin[day]
+        # Sort by the first time in the time string
+        sorted_days = sorted(days_courses, key=lambda x: int(x[4].split(" ")[0].split(":")[0]))
+        for course in sorted_days:
+            fp.write(f"- [ ] {course[0]} {course[1]} ({course[2]}, {course[3]} {course[4]} {course[5]} {course[6]})\n")
