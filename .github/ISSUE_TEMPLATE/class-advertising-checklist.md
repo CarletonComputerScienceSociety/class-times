@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+This is a checklist of all the COMP courses and their times. Check off sections
+that have been advertised to.
+
 - [ ] COMP 1001 B (Leila Chinaei, Wed Fri 14:35 - 15:55 Azrieli Theatre 302)
 - [ ] COMP 1005 A (Robert Collier, Wed Fri 08:35 - 09:55 Azrieli Theatre 301)
 - [ ] COMP 1005 B (Connor Hillen, Tue Thu 11:35 - 12:55 Health Science Building 1301)
