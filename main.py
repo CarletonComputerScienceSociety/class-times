@@ -166,4 +166,4 @@ with open(".github/ISSUE_TEMPLATE/class-advertising-checklist.md", "w") as fp:
         # Sort by the first time in the time string
         sorted_days = sorted(days_courses, key=lambda x: int(x[4].split(" ")[0].split(":")[0]))
         for course in sorted_days:
-            fp.write(f"- [ ] {course[0]} {course[1]} ({course[2]}, {course[3]} {course[4]} {course[5]} {course[6]})\n")
+            fp.write(f"- [ ] {course[0]} {course[1]} ({course[2]}, {course[4]} {course[5]} {course[6]})\n")
